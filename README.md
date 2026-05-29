@@ -52,7 +52,7 @@ Os produtos foram organizados em 4 grupos temáticos:
 - **≥ 94,9%** dos avaliadores relataram consumo habitual de derivados de pescado
 - Perfil representativo do público-alvo da Feira MostrAqui
 
-![Perfil dos Avaliadores](Figuras/fig1_perfil_avaliadores.png)
+![Perfil dos Avaliadores](Figura/fig1_perfil_avaliadores.png)
 
 ---
 
@@ -84,16 +84,16 @@ O documento HTML gerado pelo **R Markdown** cobre as seguintes seções:
 - Análise de componentes principais revelou **forte dimensão latente única de aceitação global**, com alta correlação entre os atributos sensoriais
 
 ### Intenção de Compra por Produto
-![Intenção de Compra](Figuras/fig6_intencao_compra.png)
+![Intenção de Compra](Figura/fig6_intencao_compra.png)
 
 ### Desempenho por Grupos e Atributos
-![Grupos e Atributos](Figuras/fig7_grupos_atributos.png)
+![Grupos e Atributos](Figura/fig7_grupos_atributos.png)
 
 ### Biplot ACP — Produtos × Atributos Sensoriais
-![Biplot ACP](Figuras/fig9_biplot_acp.png)
+![Biplot ACP](Figura/fig9_biplot_acp.png)
 
 ### Impressão Global por Sexo
-![Impressão Global por Sexo](Figuras/fig10_impressao_por_sexo.png)
+![Impressão Global por Sexo](Figura/fig10_impressao_por_sexo.png)
 
 ---
 
@@ -103,7 +103,7 @@ O documento HTML gerado pelo **R Markdown** cobre as seguintes seções:
 .
 ├── analise_sensorial_mostaqui_2.html      # Relatório completo (R Markdown renderizado)
 ├── df_mostraqui.xlsx                      # Base de dados das avaliações sensoriais
-├── Figuras/
+├── Figura/
 │   ├── fig1_perfil_avaliadores.png
 │   ├── fig6_intencao_compra.png
 │   ├── fig7_grupos_atributos.png
