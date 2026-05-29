@@ -1,0 +1,565 @@
+---
+title: "Análise Sensorial — Feira MostAqui"
+subtitle: "UFOPA Campus Monte Alegre | Avaliação Hedônica de Produtos à Base de Pescado"
+author: "Dr. Carlos Antônio Zarzar. Relatório gerado a partir dos dados obtidos na evento MostrAqui III (UFOPA Monte Aelgre)"
+date: "`r format(Sys.Date(), '%d de %B de %Y')`"
+output:
+  html_document:
+    theme: flatly
+    highlight: tango
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    toc_depth: 3
+    number_sections: true
+    df_print: paged
+    code_folding: hide
+    fig_width: 10
+    fig_height: 6
+    css: |
+      body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 15px; }
+      h1, h2, h3 { color: #1a5276; }
+      .highlight-box {
+        background: #eaf4fb; border-left: 5px solid #2980b9;
+        padding: 12px 18px; border-radius: 4px; margin: 14px 0;
+      }
+      .success-box {
+        background: #eafaf1; border-left: 5px solid #1b7837;
+        padding: 12px 18px; border-radius: 4px; margin: 14px 0;
+      }
+      .warning-box {
+        background: #fef9e7; border-left: 5px solid #d4ac0d;
+        padding: 12px 18px; border-radius: 4px; margin: 14px 0;
+      }
+      .danger-box {
+        background: #fdedec; border-left: 5px solid #c0392b;
+        padding: 12px 18px; border-radius: 4px; margin: 14px 0;
+      }
+      table { font-size: 13px; }
+      .figure-caption { font-style: italic; color: #555; font-size: 13px; }
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo       = TRUE,
+  warning    = FALSE,
+  message    = FALSE,
+  fig.align  = "center",
+  out.width  = "100%"
+)
+```
+
+---
+
+# Apresentação
+
+Este relatório documenta os resultados da **análise sensorial hedônica** realizada durante a Feira **MostAqui**, promovida pela UFOPA no Campus Monte Alegre. Foram avaliados **12 produtos alimentícios à base de pescado da Amazônia**, organizados em 4 grupos temáticos, por um painel de **394 avaliadores** não treinados (consumidores).
+
+<div class="highlight-box">
+**Objetivo geral:** verificar a aceitabilidade sensorial e a intenção de compra de preparações culinárias inovadoras que utilizam espécies de pescado regional, subsidiando decisões sobre potencial comercial e desenvolvimento de produtos.
+</div>
+
+---
+
+# Dataset e Estrutura Amostral
+
+```{r dataset-info}
+# Resumo do dataset
+dataset_info <- data.frame(
+  Indicador = c("Total de avaliações", "Nº de produtos", "Nº de grupos temáticos",
+                "Nº total de avaliadores"),
+  Valor = c("1.154", "12", "4", "394")
+)
+knitr::kable(dataset_info, align = c("l","c"),
+             caption = "Tabela 1 – Dimensões do dataset")
+```
+
+```{r grupos-tabela}
+grupos <- data.frame(
+  Grupo = c(2, 3, 4, 5),
+  Produtos = c(
+    "Coxinha de Rã • Lasanha de Tucunaré • Arroz Paraense com Polvo",
+    "Patê de Pirarucu • Empada de Tamoatá • Farofa de Tambaqui com Banana",
+    "Fishburguer de Acari • Risole de Tambaqui • Hot Fish de Tambaqui",
+    "Isca de Pirarucu c/ Geleia de Cupuaçu • Brigadeiro de Coco c/ Pescada • Isca de Pirapitinga c/ Doce de Castanha"
+  ),
+  N_aval = c(265, 294, 274, 288)
+)
+knitr::kable(grupos, col.names = c("Grupo", "Produtos avaliados", "N avaliadores"),
+             caption = "Tabela 2 – Grupos temáticos e produtos")
+```
+
+> **Como ler:** cada grupo foi apresentado a um subconjunto diferente de avaliadores, garantindo que cada pessoa avaliasse até 3 produtos do mesmo grupo, minimizando fadiga sensorial.
+
+---
+
+# Perfil Sociodemográfico dos Avaliadores
+
+```{r perfil-tabela}
+perfil <- data.frame(
+  Característica = c("Sexo predominante", "Mediana de idade", "Média de idade (DP)",
+                     "Faixa etária mais representada",
+                     "Consomem derivados de pescado", "Frequência semanal mais comum"),
+  Resultado = c("Feminino (~62%)", "30 anos", "31,4 anos (±13,2)",
+                "18–29 anos (n = 410 avaliações)", "~98%", "1–2 vezes/semana")
+)
+knitr::kable(perfil, align = c("l","l"),
+             caption = "Tabela 3 – Perfil dos avaliadores")
+```
+
+<div class="highlight-box">
+**Interpretação — Figura 1 (Perfil Sociodemográfico):**  
+O painel foi composto majoritariamente por **mulheres jovens adultas**, o que é típico de feiras e eventos gastronômicos locais. A alta prevalência de consumidores regulares de pescado (≈98%) indica que o painel é **representativo do público-alvo** dos produtos avaliados. A distribuição etária ampla (de ≤17 a ≥60 anos) garante diversidade de preferências sensoriais.
+</div>
+
+---
+
+# Análise Descritiva dos Atributos Sensoriais
+
+## Estatísticas gerais (todos os produtos)
+
+```{r descritiva-geral}
+desc <- data.frame(
+  Atributo   = c("Cor", "Aroma", "Aparência", "Sabor", "Impressão Global", "Intenção de Compra"),
+  n          = c(1127, 1117, 1123, 1122, 1121, 1106),
+  Média      = c(4.26, 4.19, 4.30, 4.17, 4.19, 4.10),
+  DP         = c(0.97, 0.96, 0.89, 1.05, 0.97, 1.26),
+  Mediana    = c(5, 4, 5, 5, 4, 5),
+  Mínimo     = rep(1, 6),
+  Máximo     = rep(5, 6),
+  Assimetria = c(-1.40, -1.21, -1.40, -1.23, -1.23, -1.30),
+  Curtose    = c(1.56, 0.96, 1.80, 0.75, 1.04, 0.53)
+)
+knitr::kable(desc, caption = "Tabela 4 – Estatísticas descritivas dos atributos (n todos os produtos)")
+```
+
+<div class="success-box">
+**Interpretação:** Todos os seis atributos apresentam **médias acima de 4,0** na escala hedônica de 5 pontos, o que indica aceitação geral positiva. Os valores de **assimetria negativa** (entre −1,2 e −1,4) revelam que as distribuições são assimétricas à esquerda — a maioria dos avaliadores atribuiu **notas altas (4 ou 5)**, sendo as notas baixas eventos raros. A Intenção de Compra apresentou o maior DP (1,26), refletindo maior variabilidade individual nessa dimensão.
+</div>
+
+## Médias por produto e atributo
+
+```{r medias-produto}
+resumo <- data.frame(
+  Grupo      = c(2,2,2,3,3,3,4,4,4,5,5,5),
+  Produto    = c("Coxinha de Rã","Lasanha (Tucunaré)","Arroz c/ Polvo",
+                 "Patê de Pirarucu","Empada de Tamoatá","Farofa c/ Banana",
+                 "Fishburguer (Acari)","Risole (Tambaqui)","Hot Fish (Tambaqui)",
+                 "Isca (Pirarucu)","Brigadeiro c/ Pescada","Isca (Pirapitinga)"),
+  N          = c(90,90,85,100,94,100,85,97,92,99,98,91),
+  Cor        = c(4.67,4.12,3.87,4.68,4.36,3.90,4.72,4.40,4.14,4.45,4.20,3.52),
+  Aroma      = c(4.62,4.07,3.82,4.56,4.35,3.95,4.59,4.33,4.11,4.35,4.12,3.41),
+  Aparencia  = c(4.71,4.25,4.08,4.64,4.43,3.98,4.64,4.43,4.24,4.42,4.31,3.42),
+  Sabor      = c(4.60,4.10,3.65,4.70,4.36,3.79,4.59,4.33,3.97,4.47,4.15,3.26),
+  Impressao  = c(4.64,4.14,3.81,4.61,4.36,3.85,4.54,4.35,4.07,4.43,4.13,3.34),
+  Compra     = c(4.49,3.91,3.36,4.71,4.36,3.78,4.65,4.31,3.89,4.36,4.15,3.21),
+  Aceit_pct  = c(95.6,80.0,63.5,97.0,87.2,67.0,94.1,87.6,77.2,90.9,77.6,51.6)
+)
+knitr::kable(resumo, caption = "Tabela 5 – Médias hedônicas e % de aceitação por produto")
+```
+
+<div class="highlight-box">
+**Interpretação — Figura 2 (Mapa de Calor):**  
+O heatmap exibe as médias hedônicas de cada atributo (colunas) para cada produto (linhas), com gradiente de cor do **vermelho** (baixa aceitação) ao **verde** (alta aceitação). Produtos como **Patê de Pirarucu** e **Coxinha de Rã** aparecem em tons verdes em todos os atributos, indicando **perfil sensorial consistentemente positivo**. A **Isca de Pirapitinga** destaca-se negativamente, com tons avermelhados em todos os atributos — especialmente Sabor (3,26) e Aparência (3,42).
+</div>
+
+---
+
+# Índice de Aceitabilidade (IA%)
+
+> **Metodologia:** O Índice de Aceitabilidade é calculado como IA(%) = (média obtida ÷ 5) × 100. O limiar mínimo para aprovação é **IA ≥ 70%**, amplamente utilizado em análise sensorial de alimentos (Teixeira et al., 1987).
+
+```{r ia-tabela}
+ia <- data.frame(
+  Grupo   = c(3,2,4,5,3,4,2,5,4,3,2,5),
+  Produto = c("Patê de Pirarucu","Coxinha de Rã","Fishburguer (Acari)",
+              "Isca (Pirarucu)","Empada de Tamoatá","Risole (Tambaqui)",
+              "Lasanha (Tucunaré)","Brigadeiro c/ Pescada","Hot Fish (Tambaqui)",
+              "Farofa c/ Banana","Arroz c/ Polvo","Isca (Pirapitinga)"),
+  N       = c(100,90,85,99,94,97,90,98,92,100,85,91),
+  IA_Impressao = c(92.2,92.8,90.8,88.6,87.2,87.0,82.8,82.6,81.4,77.0,76.2,66.8),
+  IA_Sabor     = c(94.0,92.0,91.8,89.4,87.2,86.6,82.0,83.0,79.4,75.8,73.0,65.2),
+  Aceit_pct    = c(97.0,95.6,94.1,90.9,87.2,87.6,80.0,77.6,77.2,67.0,63.5,51.6),
+  Resultado    = c(rep("✅ Aprovado",11),"❌ Reprovado")
+)
+knitr::kable(ia, col.names = c("Grupo","Produto","N","IA Impressão (%)","IA Sabor (%)","% Aceito","Resultado"),
+             caption = "Tabela 6 – Índice de Aceitabilidade por produto (ordenado por IA%)")
+```
+
+<div class="success-box">
+**Resultado:** **11 de 12 produtos** atingiram IA ≥ 70%, sendo considerados **aprovados** pelos consumidores.
+</div>
+
+<div class="danger-box">
+**Único reprovado:** A **Isca de Pirapitinga com Doce de Castanha de Caju e Mel** obteve IA = 66,8% (impressão) e apenas 51,6% de avaliações positivas (notas ≥ 4), sugerindo que a combinação de ingredientes — doce e peixe — não foi bem recebida pelo público local. Reformulação da receita é recomendada antes de qualquer iniciativa comercial.
+</div>
+
+<div class="highlight-box">
+**Interpretação — Figura 5 (IA% por produto):**  
+O gráfico de barras horizontais exibe os IA(%) de cada produto, com a linha vermelha tracejada marcando o limiar de 70%. Barras verdes indicam produtos aprovados; a barra vermelha sinaliza o produto reprovado. Quanto mais longa e verde a barra, maior a aceitação.
+</div>
+
+---
+
+# Intenção de Compra
+
+```{r compra-tabela}
+compra <- data.frame(
+  Produto = c("Patê de Pirarucu","Fishburguer (Acari)","Coxinha de Rã",
+              "Empada de Tamoatá","Isca (Pirarucu)","Risole (Tambaqui)",
+              "Brigadeiro c/ Pescada","Lasanha (Tucunaré)","Hot Fish (Tambaqui)",
+              "Farofa c/ Banana","Arroz c/ Polvo","Isca (Pirapitinga)"),
+  N       = c(97,85,89,94,91,97,98,87,92,100,85,91),
+  Media   = c(4.71,4.65,4.49,4.36,4.36,4.31,4.15,3.91,3.89,3.78,3.36,3.21),
+  DP      = c(0.59,0.72,1.01,1.11,1.08,0.97,1.17,1.30,1.18,1.39,1.60,1.58),
+  Mediana = c(5,5,5,5,5,5,5,4,4,4,4,3),
+  Pct_positiva = c(94.8,94.1,86.5,80.9,85.7,83.5,74.5,66.7,69.6,63.0,54.1,48.4)
+)
+knitr::kable(compra,
+             col.names = c("Produto","N","Média","DP","Mediana","% Intenção positiva"),
+             caption = "Tabela 7 – Intenção de compra por produto (ordenado por média)")
+```
+
+<div class="highlight-box">
+**Interpretação — Figura 6 (Intenção de Compra Empilhada):**  
+O gráfico de barras empilhadas (divergentes) mostra a distribuição das respostas de intenção de compra em 5 categorias — de "Certamente não compraria" (vermelho) a "Certamente compraria" (verde). Produtos no topo do gráfico têm a maior proporção de respostas verdes. O **Patê de Pirarucu** (94,8% de intenção positiva) e o **Fishburguer de Acari** (94,1%) lideram, enquanto a **Isca de Pirapitinga** (48,4%) apresenta mais de metade dos avaliadores com intenção negativa ou neutra.
+</div>
+
+---
+
+# Comparação entre Grupos Temáticos
+
+```{r grupos-medias}
+grupos_med <- data.frame(
+  Grupo      = c("Grupo 2 (Lasanha/Coxinha/Arroz)",
+                 "Grupo 3 (Patê/Farofa/Empada)",
+                 "Grupo 4 (Risole/Hot Fish/Fishburguer)",
+                 "Grupo 5 (Iscas/Brigadeiro)"),
+  Cor        = c(4.23, 4.31, 4.41, 4.07),
+  Aroma      = c(4.18, 4.28, 4.34, 3.98),
+  Aparencia  = c(4.35, 4.35, 4.43, 4.07),
+  Sabor      = c(4.12, 4.28, 4.29, 3.98),
+  Impressao  = c(4.21, 4.27, 4.31, 3.99),
+  Compra     = c(3.93, 4.28, 4.27, 3.91),
+  Aceit_pct  = c(80.0, 83.7, 86.1, 74.0)
+)
+knitr::kable(grupos_med,
+             col.names = c("Grupo","Cor","Aroma","Aparência","Sabor",
+                           "Impressão","Compra","% Aceito"),
+             caption = "Tabela 8 – Médias hedônicas por grupo temático")
+```
+
+<div class="highlight-box">
+**Interpretação — Figura 7 (Médias por Grupo):**  
+O gráfico de barras agrupadas compara os 4 grupos nos diferentes atributos sensoriais. O **Grupo 4** (Risole/Hot Fish/Fishburguer) obteve as maiores médias na maior parte dos atributos. O **Grupo 5** (Iscas/Brigadeiro) apresenta as menores médias em todos os atributos, puxadas pela baixa aceitação da Isca de Pirapitinga. A linha tracejada em 4,0 facilita identificar quais grupos/atributos estão acima do limiar de aceitação.
+</div>
+
+---
+
+# Análise Inferencial
+
+## Kruskal-Wallis entre produtos
+
+```{r kruskal-prod}
+kw_prod <- data.frame(
+  Atributo  = c("Cor","Aroma","Aparência","Sabor","Impressão Global","Intenção de Compra"),
+  H_df11    = c(131.57, 107.14, 113.95, 150.53, 133.40, 128.86),
+  p_valor   = rep("< 0,001", 6),
+  Sig       = rep("***", 6)
+)
+knitr::kable(kw_prod, col.names = c("Atributo","H (df=11)","p-valor","Sig."),
+             caption = "Tabela 9 – Kruskal-Wallis por atributo entre os 12 produtos")
+```
+
+<div class="success-box">
+**Interpretação:** O teste de **Kruskal-Wallis** é um teste não-paramétrico equivalente à ANOVA de uma via para dados ordinais. O resultado **H(11) altamente significativo (p < 0,001) para todos os atributos** confirma que as medianas diferem significativamente entre os 12 produtos — ou seja, as diferenças observadas nas médias não são atribuíveis ao acaso.
+</div>
+
+## Pós-teste de Dunn (Bonferroni) — Impressão Global
+
+```{r dunn-top}
+dunn <- data.frame(
+  Produto_1 = c("Coxinha de Rã","Isca (Pirapitinga)","Fishburguer (Acari)",
+                "Isca (Pirapitinga)","Coxinha de Rã","Farofa c/ Banana",
+                "Empada de Tamoatá","Arroz c/ Polvo","Isca (Pirapitinga)","Arroz c/ Polvo"),
+  Produto_2 = c("Isca (Pirapitinga)","Patê de Pirarucu","Isca (Pirapitinga)",
+                "Isca (Pirarucu)","Farofa c/ Banana","Patê de Pirarucu",
+                "Isca (Pirapitinga)","Coxinha de Rã","Risole (Tambaqui)","Patê de Pirarucu"),
+  Estatistica = c(-7.86, 7.63, -6.78, 6.59, -6.15, 5.87, -5.67, 5.48, 5.40, 5.19),
+  p_adj = c("<0,001","<0,001","<0,001","<0,001","<0,001","<0,001","<0,001","<0,001","<0,001","<0,001")
+)
+knitr::kable(dunn, col.names = c("Produto A","Produto B","Estatística z","p ajustado (Bonferroni)"),
+             caption = "Tabela 10 – Top 10 pares com diferença significativa (Dunn, Bonferroni)")
+```
+
+> **Total de pares significativos:** 24 de 66 combinações possíveis (p < 0,05 após correção de Bonferroni).
+
+<div class="highlight-box">
+**Interpretação:** O pós-teste de Dunn identifica **quais pares específicos de produtos** diferem entre si. A **Isca de Pirapitinga** aparece repetidamente como diferindo significativamente dos produtos mais bem avaliados (Coxinha de Rã, Patê de Pirarucu, Fishburguer), confirmando seu desempenho abaixo da média. Estatísticas negativas indicam que o Produto A é avaliado **abaixo** do Produto B.
+</div>
+
+## Kruskal-Wallis entre grupos temáticos
+
+```{r kruskal-grupo}
+kw_grupo <- data.frame(
+  Teste = "Kruskal-Wallis (Impressão Global × Grupo)",
+  H    = 9.14,
+  df   = 3,
+  p    = 0.0274,
+  Sig  = "*"
+)
+knitr::kable(kw_grupo, caption = "Tabela 11 – Kruskal-Wallis entre os 4 grupos temáticos")
+```
+
+> **Interpretação:** Há diferença significativa (p = 0,027) entre os grupos temáticos na Impressão Global, indicando que o tipo de preparo/espécie influencia a aceitação.
+
+## Wilcoxon — Impressão Global por sexo
+
+```{r wilcoxon-sexo}
+wx <- data.frame(
+  Sexo    = c("Feminino","Masculino"),
+  Mediana = c(4, 4),
+  Média   = c(4.17, 4.23)
+)
+knitr::kable(wx, caption = "Tabela 12 – Impressão Global por sexo")
+```
+
+> **Resultado:** W = 141.242 | p = 0,3208 — **não significativo.** Homens e mulheres avaliaram os produtos de forma estatisticamente equivalente.
+
+<div class="highlight-box">
+**Interpretação — Figura 10 (Impressão por Sexo × Produto):**  
+O gráfico mostra que, para a grande maioria dos produtos, as médias masculinas e femininas são muito próximas, confirmando o resultado do teste de Wilcoxon. As barras de erro (erro padrão) se sobrepõem amplamente entre os dois sexos em todos os produtos, reforçando a ausência de diferença significativa.
+</div>
+
+## Correlação de Spearman — Idade × Impressão Global
+
+> ρ = 0,026 | p = 0,3851 — **Não significativo.** A idade dos avaliadores não está associada à impressão global atribuída aos produtos.
+
+---
+
+# Correlações de Spearman entre Atributos
+
+```{r cor-matrix}
+cor_mat <- data.frame(
+  Atributo   = c("Cor","Aroma","Aparência","Sabor","Impressão Global","Intenção Compra"),
+  Cor        = c(1.000, 0.785, 0.748, 0.789, 0.779, 0.724),
+  Aroma      = c(0.785, 1.000, 0.763, 0.779, 0.821, 0.712),
+  Aparencia  = c(0.748, 0.763, 1.000, 0.745, 0.797, 0.674),
+  Sabor      = c(0.789, 0.779, 0.745, 1.000, 0.860, 0.795),
+  Impressao  = c(0.779, 0.821, 0.797, 0.860, 1.000, 0.771),
+  Compra     = c(0.724, 0.712, 0.674, 0.795, 0.771, 1.000)
+)
+knitr::kable(cor_mat,
+             col.names = c("Atributo","Cor","Aroma","Aparência","Sabor","Impressão","Compra"),
+             caption   = "Tabela 13 – Matriz de correlações de Spearman entre atributos")
+```
+
+<div class="success-box">
+**Destaques:**
+
+- **Sabor ↔ Impressão Global:** ρ = 0,860 — correlação mais forte de toda a matriz. O sabor é o principal determinante da impressão geral.
+- **Impressão Global ↔ Intenção de Compra:** ρ = 0,771 — quem gosta do produto tende fortemente a declarar intenção de compra.
+- **Todos os pares:** ρ > 0,67, indicando que os atributos hedônicos medem dimensões altamente relacionadas (avaliadores tendem a dar notas consistentes ao longo dos atributos).
+</div>
+
+<div class="highlight-box">
+**Interpretação — Figura 8 (Matriz de Correlação):**  
+O mapa de calor triangular exibe os coeficientes de Spearman com gradiente verde (correlação forte e positiva) a vermelho (correlação forte e negativa). As células mais escuras indicam os pares mais correlacionados. O agrupamento hierárquico (hclust) reordena os atributos para que os mais similares fiquem adjacentes — note como **Sabor** e **Impressão Global** ficam próximos, refletindo sua alta correlação (ρ = 0,860).
+</div>
+
+---
+
+# Regressão Ordinal — Preditores da Impressão Global
+
+> **Modelo:** Regressão de proporcional de chances (*Proportional Odds Logistic Regression*, função `polr`) com link logístico. Variável resposta: Impressão Global ordinal (1–5).
+
+```{r regressao}
+reg <- data.frame(
+  Variavel  = c("Cor","Aroma","Aparência","Sabor","Intenção de Compra"),
+  Coef      = c(0.2315, 0.8750, 1.2251, 2.0378, 0.5329),
+  EP        = c(0.1538, 0.1470, 0.1452, 0.1743, 0.1179),
+  p_valor   = c(0.1323, "<0,001", "<0,001", "<0,001", "<0,001"),
+  OR        = c(1.261, 2.399, 3.405, 7.673, 1.704),
+  Sig       = c("ns","***","***","***","***")
+)
+knitr::kable(reg,
+             col.names = c("Preditor","Coeficiente","Erro Padrão","p-valor","Odds Ratio","Sig."),
+             caption   = "Tabela 14 – Regressão ordinal: preditores da Impressão Global")
+```
+
+<div class="success-box">
+**Interpretação dos Odds Ratios (OR):**
+
+| Preditor | OR | Interpretação |
+|---|---|---|
+| **Sabor** | 7,67 | Cada ponto a mais no Sabor multiplica por ~7,7× a chance de nota mais alta |
+| **Aparência** | 3,41 | Impacto moderado-alto na impressão global |
+| **Aroma** | 2,40 | Impacto moderado |
+| **Intenção de Compra** | 1,70 | Associação positiva com a nota de impressão |
+| **Cor** | 1,26 | **Não significativo** (p = 0,132) — a cor isolada não prediz a impressão global quando controlados os demais atributos |
+
+O **Sabor** é o preditor dominante da Impressão Global, confirmando o padrão observado nas correlações de Spearman.
+</div>
+
+---
+
+# Análise de Componentes Principais (ACP)
+
+```{r acp}
+acp <- data.frame(
+  Componente  = c("PC1","PC2","PC3","PC4","PC5","PC6"),
+  Variância   = c(97.9, 1.4, 0.5, 0.2, 0.0, 0.0),
+  Acumulada   = c(97.9, 99.3, 99.8, 100.0, 100.0, 100.0)
+)
+knitr::kable(acp, col.names = c("Componente","Variância explicada (%)","Acumulada (%)"),
+             caption = "Tabela 15 – Variância explicada pelos componentes principais")
+```
+
+```{r cargas-acp}
+cargas <- data.frame(
+  Atributo  = c("Cor","Aroma","Aparência","Sabor","Impressão Global","Intenção de Compra"),
+  PC1       = c(-0.410, -0.411, -0.404, -0.411, -0.411, -0.403),
+  PC2       = c(-0.049,  0.104,  0.656, -0.183,  0.172, -0.703)
+)
+knitr::kable(cargas, col.names = c("Atributo","Carga PC1","Carga PC2"),
+             caption = "Tabela 16 – Cargas fatoriais dos dois primeiros componentes")
+```
+
+<div class="highlight-box">
+**Interpretação — Figura 9 (Biplot ACP):**
+
+O biplot exibe simultaneamente os **produtos** (pontos azuis) e os **atributos** (setas vermelhas) no espaço dos dois primeiros componentes principais.
+
+- **PC1 (97,9% da variância):** Todos os atributos têm cargas semelhantes e negativas em PC1 (≈ −0,41), o que significa que PC1 é essencialmente um **índice geral de aceitação**. Produtos posicionados mais à esquerda no eixo PC1 são os mais bem avaliados (Patê de Pirarucu, Coxinha de Rã, Fishburguer); os mais à direita são os menos aceitos (Isca de Pirapitinga).
+- **PC2 (1,4% da variância):** Distingue produtos que se sobressaem em **Aparência** (carga +0,656) vs. **Intenção de Compra** (carga −0,703). Este componente captura uma tensão entre "atraente visualmente" e "compraria de fato", mas explica pouca variância adicional.
+- **Conclusão ACP:** A altíssima concentração de variância em PC1 confirma que os atributos hedônicos são **altamente colineares** — um produto bom tende a ser bem avaliado em todas as dimensões simultaneamente.
+</div>
+
+---
+
+# Análise Demográfica Segmentada
+
+## Por faixa etária
+
+```{r faixa-etaria}
+faixa <- data.frame(
+  Faixa    = c("≤17 anos","18–29","30–44","45–59","≥60"),
+  N        = c(120, 410, 366, 164, 23),
+  Média    = c(4.29, 4.15, 4.19, 4.27, 4.22),
+  DP       = c(0.88, 0.97, 1.00, 0.99, 0.95),
+  Aceit_pct= c(84.2, 77.6, 82.5, 85.4, 82.6)
+)
+knitr::kable(faixa, col.names = c("Faixa etária","N avaliações","Média","DP","% Aceito"),
+             caption = "Tabela 17 – Impressão Global por faixa etária")
+```
+
+> As médias são bastante homogêneas entre as faixas etárias (amplitude de apenas 0,14 pontos), confirmando que a aceitação dos produtos é **transversal às gerações**.
+
+## Por frequência de consumo semanal
+
+```{r frequencia-consumo}
+freq <- data.frame(
+  Vezes    = c(0, 1, 2, 3, 4, 5, 6, 7),
+  N        = c(3, 526, 270, 198, 37, 31, 7, 2),
+  Média    = c(3.00, 4.13, 4.31, 4.18, 4.14, 4.61, 4.43, 5.00),
+  Aceit_pct= c(33.3, 77.0, 84.8, 84.8, 81.1, 96.8, 85.7, 100.0)
+)
+knitr::kable(freq, col.names = c("Vezes/semana","N","Média","% Aceito"),
+             caption = "Tabela 18 – Impressão Global por frequência de consumo semanal")
+```
+
+<div class="success-box">
+**Padrão identificado:** Consumidores que ingerem pescado com **maior frequência semanal tendem a avaliar melhor os produtos** (consumidores diários: média 4,61–5,00 vs. não consumidores: 3,00). Isso sugere que os produtos têm apelo especialmente forte entre o **público habituado ao consumo de peixe**, que é também o público prioritário desses produtos regionais.
+</div>
+
+---
+
+# Resumo Executivo dos Achados
+
+```{r resumo-exec}
+exec <- data.frame(
+  Dimensão = c(
+    "Taxa de aprovação (IA ≥ 70%)",
+    "Melhor produto geral",
+    "Menor aceitação",
+    "Atributo mais preditivo",
+    "Correlação Sabor ↔ Impressão",
+    "Correlação Impressão ↔ Compra",
+    "Diferença por sexo",
+    "Diferença por idade",
+    "Kruskal-Wallis (produtos)",
+    "Kruskal-Wallis (grupos)"
+  ),
+  Resultado = c(
+    "11/12 produtos aprovados (91,7%)",
+    "Coxinha de Rã (IA = 92,8%) e Patê de Pirarucu (IA = 92,2%)",
+    "Isca de Pirapitinga (IA = 66,8%) — reprovada",
+    "Sabor (OR = 7,67 na regressão ordinal; ρ = 0,860 com Impressão)",
+    "ρ = 0,860 — correlação mais forte da matriz",
+    "ρ = 0,771 — quem gosta tende fortemente a comprar",
+    "p = 0,321 — sem diferença significativa",
+    "ρ = 0,026; p = 0,385 — sem associação",
+    "H = 133,4; p < 0,001 — diferenças altamente significativas",
+    "H = 9,1; p = 0,027 — diferença significativa entre grupos"
+  )
+)
+knitr::kable(exec, col.names = c("Dimensão","Resultado"),
+             caption = "Tabela 19 – Resumo executivo dos resultados")
+```
+
+---
+
+# Considerações Finais e Recomendações
+
+<div class="success-box">
+**✅ Pontos fortes gerais:**
+
+- Alta taxa de aprovação (11/12) demonstra que os produtos desenvolvidos a partir de espécies amazônicas têm **sólido potencial de mercado**.
+- O **Patê de Pirarucu** e o **Fishburguer de Acari** se destacam também na Intenção de Compra (>94%), sugerindo **viabilidade comercial imediata**.
+- O Sabor é o principal driver de aceitação — investir na qualidade gustativa das formulações é a estratégia mais eficiente.
+- A aceitação é consistente entre sexos, faixas etárias e grupos, indicando **apelo amplo e democrático** dos produtos.
+</div>
+
+<div class="warning-box">
+**⚠️ Pontos de atenção e recomendações:**
+
+1. **Isca de Pirapitinga com Doce de Castanha de Caju e Mel** (IA = 66,8%, único reprovado): reformular a combinação doce-salgado, testar proporções menores do componente adocicado ou substituir o tipo de preparo antes de novos testes.
+2. **Arroz Paraense com Polvo** (IA = 76,2%, menor entre os aprovados): embora aprovado, apresenta 63,5% de aceitação efetiva — margem limitada. Revisão da textura/tempero pode elevar a aceitação.
+3. **Farofa de Tambaqui com Banana** (IA = 77%, Aceit_pct = 67%): a discrepância entre IA (77%) e % aceito (67%) indica polarização de respostas — parte dos avaliadores gostou muito, outra parte não gostou. Avaliar segmentação de mercado para esse produto.
+4. Consumidores de **baixa frequência de consumo de pescado** apresentaram menor aceitação — estratégias de comunicação e educação alimentar podem ampliar o público.
+</div>
+
+<div class="highlight-box">
+**📊 Sobre os gráficos gerados:**
+
+| Figura | Tipo | Principal uso |
+|---|---|---|
+| Fig. 1 | Painel 4 gráficos | Caracterizar o perfil do painel de avaliadores |
+| Fig. 2 | Heatmap | Identificar padrões de força/fraqueza por produto e atributo |
+| Fig. 3 | Boxplot | Comparar distribuições e variabilidade entre produtos |
+| Fig. 4 | Barras empilhadas hedônicas | Visualizar proporção de cada nota por produto |
+| Fig. 5 | Barras horizontais IA% | Comparar índices de aceitabilidade com o limiar 70% |
+| Fig. 6 | Barras empilhadas compra | Visualizar distribuição da intenção de compra |
+| Fig. 7 | Barras agrupadas por grupo | Comparar perfis sensoriais entre grupos temáticos |
+| Fig. 8 | Mapa de calor correlação | Identificar atributos mais relacionados entre si |
+| Fig. 9 | Biplot ACP | Posicionar produtos e atributos num espaço multivariado |
+| Fig. 10 | Barras agrupadas por sexo | Verificar diferenças de avaliação entre homens e mulheres |
+</div>
+
+---
+
+# Referências Metodológicas
+
+- **Escala hedônica de 5 pontos:** adaptada de Peryam & Pilgrim (1957), amplamente utilizada em análise sensorial de alimentos.
+- **Índice de Aceitabilidade:** Teixeira, E.; Meinert, E. M.; Barbetta, P. A. (1987). *Análise Sensorial de Alimentos*. Florianópolis: UFSC.
+- **Teste de Kruskal-Wallis + Dunn:** testes não-paramétricos apropriados para dados ordinais provenientes de escalas hedônicas.
+- **Regressão de proporcional de chances:** Agresti, A. (2002). *Categorical Data Analysis*, 2ª ed. Wiley.
+- **Correlação de Spearman:** medida de associação monotônica, robusta para dados ordinais.
+
+---
+
+<center>
+*Relatório produzido com R Markdown | Script de análise: `Analise_mostraqui.R`*  
+*Feira MostAqui — UFOPA Campus Monte Alegre*
+</center>
