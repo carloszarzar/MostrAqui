@@ -186,8 +186,8 @@ knitr::kable(na_df, col.names = c("Variável", "N ausentes", "%"),
 
 ```{r perfil}
 perfil <- df %>%
-  distinct(grupo, grupo_label, entrevistado, .keep_all = TRUE) %>%
-  group_by(grupo, grupo_label) %>%
+  distinct(grupo, entrevistado, .keep_all = TRUE) %>%
+  group_by(grupo) %>%
   summarise(
     N_total     = n(),
     Feminino    = sum(sexo == "Feminino",  na.rm = TRUE),
@@ -200,7 +200,7 @@ perfil <- df %>%
     .groups = "drop")
 
 knitr::kable(perfil,
-             col.names = c("Grupo","Descrição","N","Feminino","Masculino",
+             col.names = c("Grupo","N Total","Feminino","Masculino",
                            "% Fem.","Mediana Idade","Média Idade","DP Idade",
                            "% Consome Derivados"),
              caption = "Perfil dos avaliadores por grupo")
