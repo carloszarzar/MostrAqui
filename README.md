@@ -5,6 +5,8 @@
 > Relatório produzido por **Dr. Carlos Antônio Zarzar** — 28 de maio de 2026
 
 ---
+### [📋 Acesse o Relatório Completo](https://carloszarzar.github.io/MostrAqui/)
+---
 
 ## 📋 Sobre o Projeto
 
