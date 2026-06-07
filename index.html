@@ -1669,7 +1669,7 @@ MostrAqui</h1>
 <h3 class="subtitle">Produtos Derivados do Pescado | UFOPA – Campus
 Monte Alegre</h3>
 <h4 class="author">Autor do relatório: Dr. Carlos Antônio Zarzar</h4>
-<h4 class="date">28 de maio de 2026</h4>
+<h4 class="date">07 de junho de 2026</h4>
 
 </div>
 
@@ -1910,8 +1910,8 @@ sistemático na ausência de dados.</p>
 <h1><span class="header-section-number">3</span> Perfil dos
 Avaliadores</h1>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>perfil <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(grupo, grupo_label, entrevistado, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(grupo, grupo_label) <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(grupo, entrevistado, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(grupo) <span class="sc">%&gt;%</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">N_total     =</span> <span class="fu">n</span>(),</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Feminino    =</span> <span class="fu">sum</span>(sexo <span class="sc">==</span> <span class="st">&quot;Feminino&quot;</span>,  <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
@@ -1924,29 +1924,27 @@ Avaliadores</h1>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(perfil,</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Grupo&quot;</span>,<span class="st">&quot;Descrição&quot;</span>,<span class="st">&quot;N&quot;</span>,<span class="st">&quot;Feminino&quot;</span>,<span class="st">&quot;Masculino&quot;</span>,</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Grupo&quot;</span>,<span class="st">&quot;N Total&quot;</span>,<span class="st">&quot;Feminino&quot;</span>,<span class="st">&quot;Masculino&quot;</span>,</span>
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;% Fem.&quot;</span>,<span class="st">&quot;Mediana Idade&quot;</span>,<span class="st">&quot;Média Idade&quot;</span>,<span class="st">&quot;DP Idade&quot;</span>,</span>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>                           <span class="st">&quot;% Consome Derivados&quot;</span>),</span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>             <span class="at">caption =</span> <span class="st">&quot;Perfil dos avaliadores por grupo&quot;</span>)</span></code></pre></div>
 <table style="width:100%;">
 <caption>Perfil dos avaliadores por grupo</caption>
 <colgroup>
-<col width="4%" />
-<col width="31%" />
-<col width="3%" />
 <col width="6%" />
-<col width="7%" />
-<col width="5%" />
-<col width="10%" />
+<col width="8%" />
 <col width="9%" />
-<col width="6%" />
-<col width="15%" />
+<col width="10%" />
+<col width="7%" />
+<col width="14%" />
+<col width="12%" />
+<col width="9%" />
+<col width="21%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th align="right">Grupo</th>
-<th align="left">Descrição</th>
-<th align="right">N</th>
+<th align="right">N Total</th>
 <th align="right">Feminino</th>
 <th align="right">Masculino</th>
 <th align="right">% Fem.</th>
@@ -1959,19 +1957,7 @@ Avaliadores</h1>
 <tbody>
 <tr class="odd">
 <td align="right">2</td>
-<td align="left">Grupo 2</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-</tr>
-<tr class="even">
-<td align="right">(Lasanha / Coxinha / Arroz)</td>
-<td align="left">97</td>
+<td align="right">97</td>
 <td align="right">61</td>
 <td align="right">34</td>
 <td align="right">64.2</td>
@@ -1979,23 +1965,10 @@ Avaliadores</h1>
 <td align="right">30.7</td>
 <td align="right">13.2</td>
 <td align="right">99.0</td>
-<td align="right"></td>
-</tr>
-<tr class="odd">
-<td align="right">3</td>
-<td align="left">Grupo 3</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
 </tr>
 <tr class="even">
-<td align="right">(Patê / Farofa / Empada)</td>
-<td align="left">100</td>
+<td align="right">3</td>
+<td align="right">100</td>
 <td align="right">61</td>
 <td align="right">39</td>
 <td align="right">61.0</td>
@@ -2003,23 +1976,10 @@ Avaliadores</h1>
 <td align="right">31.2</td>
 <td align="right">12.3</td>
 <td align="right">98.0</td>
-<td align="right"></td>
 </tr>
 <tr class="odd">
 <td align="right">4</td>
-<td align="left">Grupo 4</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-</tr>
-<tr class="even">
-<td align="right">(Risole / Hot Fish / Fishburguer)</td>
-<td align="left">97</td>
+<td align="right">97</td>
 <td align="right">59</td>
 <td align="right">38</td>
 <td align="right">60.8</td>
@@ -2027,23 +1987,10 @@ Avaliadores</h1>
 <td align="right">31.3</td>
 <td align="right">13.4</td>
 <td align="right">99.0</td>
-<td align="right"></td>
-</tr>
-<tr class="odd">
-<td align="right">5</td>
-<td align="left">Grupo 5</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
 </tr>
 <tr class="even">
-<td align="right">(Iscas / Brigadeiro)</td>
-<td align="left">100</td>
+<td align="right">5</td>
+<td align="right">100</td>
 <td align="right">64</td>
 <td align="right">36</td>
 <td align="right">64.0</td>
@@ -2051,7 +1998,6 @@ Avaliadores</h1>
 <td align="right">32.3</td>
 <td align="right">14.1</td>
 <td align="right">94.9</td>
-<td align="right"></td>
 </tr>
 </tbody>
 </table>
